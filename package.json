@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "scrape": "ts-node-esm ./scrapper/animes.ts",
     "dev:api": "wrangler dev",
     "dev": "astro dev",
     "start": "astro dev",
