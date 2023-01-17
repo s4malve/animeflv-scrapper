@@ -240,11 +240,4 @@ export const downloadVideoWithPreferProvider = async (
   return await downloadVideo(absolutePath, pathToSave)
 }
 
-console.log(
-  await downloadVideoWithPreferProvider(
-    'https://www18.zippyshare.com/v/90DeH4c0/file.html',
-    'D:/s4malve/Documents/test-folder/video.mp4'
-  )
-)
-
 export {}
