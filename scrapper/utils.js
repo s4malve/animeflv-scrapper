@@ -1,5 +1,4 @@
 // @ts-check
-import type { Page } from 'playwright'
 
 export const URLS = {
   animeflv: {
@@ -16,7 +15,7 @@ export const URLS = {
   }
 }
 
-export const scrapeCheerio = async (url: string) => {
+export const scrapeCheerio = async (url) => {
   const cheerio = await import('cheerio')
   const res = await fetch(url)
   const html = await res.text()
@@ -24,10 +23,13 @@ export const scrapeCheerio = async (url: string) => {
   return cheerio.load(html)
 }
 
-export const scrapePlaywright = async (
-  url: string,
-  callback: (page: any) => any
-): Promise<any> => {
+/**
+ *
+ * @param {string} url
+ * @param {(page:import('playwright').Page) => any} callback
+ * @returns Promise<any>
+ */
+export const scrapePlaywright = async (url, callback) => {
   const playwright = await import('playwright')
   const browser = await playwright.chromium.launch({ headless: true })
   const page = await browser.newPage({
@@ -43,7 +45,13 @@ export const scrapePlaywright = async (
   return scrapeActions
 }
 
-export const downloadVideo = async (videoUrl: string, pathToSave: string) => {
+/**
+ *
+ * @param {string} videoUrl
+ * @param {string} pathToSave
+ * @returns void
+ */
+export const downloadVideo = async (videoUrl, pathToSave) => {
   const axios = await import('axios').then((axios) => axios.default)
   const { createWriteStream } = await import('node:fs')
 
@@ -85,7 +93,7 @@ export const getMaxAnimeIndex = async () => {
 }
 
 export const getAllAnimesInPage = async (pageNumber = 1) => {
-  const animesFromPage: {}[] = []
+  const animesFromPage = []
   const $ = await scrapeCheerio(
     `${URLS.animeflv.BASE}/${URLS.animeflv.ALL_ANIMES}?page=${pageNumber}`
   )
@@ -97,7 +105,7 @@ export const getAllAnimesInPage = async (pageNumber = 1) => {
         name: 'attr',
         value: 'href'
       },
-      format: (text: string) => text.slice(7)
+      format: (text) => text.slice(7)
     },
     title: {
       selector: 'h3.Title',
@@ -122,6 +130,14 @@ export const getAllAnimesInPage = async (pageNumber = 1) => {
         value: 'src'
       },
       format: null
+    },
+    type: {
+      selector: 'div.Image.fa-play-circle-o span.Type',
+      action: {
+        name: 'text',
+        value: undefined
+      },
+      format: null
     }
   }
   const animeSelctorEntries = Object.entries(ANIME_SELECTORS)
@@ -143,12 +159,20 @@ export const getAllAnimesInPage = async (pageNumber = 1) => {
   return animesFromPage
 }
 
-export const getAnimeEpisodes = async (
-  animeId: string
-): Promise<{ anime: string; episode: number }[]> => {
+/**
+ *
+ * @param {string} animeId
+ * @returns Promise<{ anime: string; episode: number }[]>
+ */
+export const getAnimeEpisodes = async (animeId) => {
   const episodes = await scrapePlaywright(
     `${URLS.tioanime.BASE}/${URLS.tioanime.SINGLE_ANIME}/${animeId}`,
-    async (page: Page) =>
+    /**
+     *
+     * @param {import('playwright').Page} page
+     * @returns
+     */
+    async (page) =>
       await page.$$eval('ul.episodes-list li', (nodes) => {
         const EPISODES_SELECTORS = {
           id: {
@@ -196,10 +220,7 @@ export const getAnimeEpisodes = async (
 }
 
 export const getTodaysAnimes = async () => {
-  const todaysAnimes: {
-    id: string
-    episode: number
-  }[] = []
+  const todaysAnimes = []
   const TODAYS_ANIME_SELECTORS = {
     id: {
       selector: 'a',
@@ -207,7 +228,7 @@ export const getTodaysAnimes = async () => {
         name: 'attr',
         value: 'href'
       },
-      format: (text: string) => text.slice(5)
+      format: (text) => text.slice(5)
     },
     episode: {
       selector: 'span.Capi',
@@ -215,7 +236,7 @@ export const getTodaysAnimes = async () => {
         name: 'text',
         value: undefined
       },
-      format: (text: string) => Number(text.split(' ')[1])
+      format: (text) => Number(text.split(' ')[1])
     }
   }
   const $ = await scrapeCheerio(URLS.animeflv.BASE)
@@ -238,15 +259,13 @@ export const getTodaysAnimes = async () => {
   return todaysAnimes
 }
 
-export const getProviderLink = async (episodeId: string) => {
+export const getProviderLink = async (episodeId) => {
   const PROVIDERS = {
     MAIN: 'Zippyshare',
     ALTERNATIVE: 'Stape',
     NOT_RECOMMENDED: 'MEGA'
   }
-  const downloadsProviders: {
-    [key in keyof typeof DOWNLOADS_PROVIDERS_SELECTORS]: string
-  }[] = []
+  const downloadsProviders = []
   const DOWNLOADS_PROVIDERS_SELECTORS = {
     name: {
       selector: 'td:first-child',
@@ -294,21 +313,28 @@ export const getProviderLink = async (episodeId: string) => {
   return provider
 }
 
+/**
+ * @param {string} providerUrl
+ * @param {string} pathToSave
+ */
 export const downloadVideoWithPreferProvider = async (
-  providerUrl: string,
-  pathToSave: string
+  providerUrl,
+  pathToSave
 ) => {
   const pathArray = providerUrl.split('/')
   const pathProtocol = pathArray[0]
   const pathHost = pathArray[2]
   const downloadLink = await scrapePlaywright(
     providerUrl,
-    async (page: Page) =>
+    /**
+     *
+     * @param {import('playwright').Page} page
+     * @returns
+     */
+    async (page) =>
       await page.$eval('a#dlbutton', (el) => el.getAttribute('href')?.slice(1))
   )
   const absolutePath = `${pathProtocol}//${pathHost}/${downloadLink}`
 
   return await downloadVideo(absolutePath, pathToSave)
 }
-
-export {}
