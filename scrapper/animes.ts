@@ -143,7 +143,9 @@ export const getAllAnimesInPage = async (pageNumber = 1) => {
   return animesFromPage
 }
 
-export const getAnimeEpisodes = async (animeId: string) => {
+export const getAnimeEpisodes = async (
+  animeId: string
+): Promise<{ anime: string; episode: number }[]> => {
   const episodes = await scrapePlaywright(
     `${URLS.tioanime.BASE}/${URLS.tioanime.SINGLE_ANIME}/${animeId}`,
     async (page: Page) =>
