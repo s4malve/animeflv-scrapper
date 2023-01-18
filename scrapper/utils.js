@@ -162,7 +162,7 @@ export const getAllAnimesInPage = async (pageNumber = 1) => {
 /**
  *
  * @param {string} animeId
- * @returns Promise<{ anime: string; episode: number }[]>
+ * @returns Promise<{ id: string; episode: number }[]>
  */
 export const getAnimeEpisodes = async (animeId) => {
   const episodes = await scrapePlaywright(
