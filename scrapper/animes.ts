@@ -239,9 +239,11 @@ export const getTodaysAnimes = async () => {
 }
 
 export const getProviderLink = async (episodeId: string) => {
-  const PREFFER_PROVIDER = 'Zippyshare'
-  const NOT_RECOMMENDED_PROVIDER = 'MEGA'
-  const PROVIDER_IF_PREFFER_PROVIDER_DONT_EXIST = 'Stape'
+  const PROVIDERS = {
+    MAIN: 'Zippyshare',
+    ALTERNATIVE: 'Stape',
+    NOT_RECOMMENDED: 'MEGA'
+  }
   const downloadsProviders: {
     [key in keyof typeof DOWNLOADS_PROVIDERS_SELECTORS]: string
   }[] = []
@@ -281,20 +283,15 @@ export const getProviderLink = async (episodeId: string) => {
     downloadsProviders.push(Object.fromEntries(downloadsProvidersEntries))
   })
 
-  const preferProviderExist = downloadsProviders.find(
-    ({ name }) => name === PREFFER_PROVIDER
-  )
-
-  const fileteredDownloadsProviders = downloadsProviders.filter(({ name }) => {
-    return (
-      name !== NOT_RECOMMENDED_PROVIDER &&
-      (preferProviderExist
-        ? name === PREFFER_PROVIDER
-        : name === PROVIDER_IF_PREFFER_PROVIDER_DONT_EXIST)
-    )
+  const filteredProviders = downloadsProviders.filter(({ name }) => {
+    return name !== PROVIDERS.NOT_RECOMMENDED
   })
 
-  return fileteredDownloadsProviders
+  const provider = filteredProviders.find(
+    ({ name }) => name === PROVIDERS.MAIN || name === PROVIDERS.ALTERNATIVE
+  )
+
+  return provider
 }
 
 export const downloadVideoWithPreferProvider = async (
