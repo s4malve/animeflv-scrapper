@@ -15,6 +15,14 @@ export const URLS = {
   }
 }
 
+export const destructurePath = (path) => {
+  const [protocol, domain, ...routes] = path
+    .split('/')
+    .filter((text) => text !== '')
+
+  return { protocol, domain, routes }
+}
+
 export const scrapeCheerio = async (url) => {
   const cheerio = await import('cheerio')
   const res = await fetch(url)
