@@ -339,6 +339,7 @@ export const getProviderLink = async (episodeId) => {
 /**
  * @param {string} providerUrl
  * @param {string} pathToSave
+ * @returns {Promise<string> | Error}
  */
 export const getDownloadLinkFromPreferProvider = async (providerUrl) => {
   const $ = await scrapeCheerio(providerUrl)
