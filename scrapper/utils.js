@@ -15,7 +15,7 @@ export const URLS = {
   }
 }
 
-export const destructurePath = (path) => {
+export const destructureURL = (path) => {
   const [protocol, domain, ...routes] = path
     .split('/')
     .filter((text) => text !== '')
@@ -282,7 +282,7 @@ export const getTodaysAnimes = async () => {
  * @param {string} episodeId
  * @returns {Promise<{name:string;path:string}>}
  */
-export const getProviderLink = async (episodeId) => {
+export const getProvidersLink = async (episodeId) => {
   const PROVIDERS = {
     MAIN: 'Zippyshare',
     ALTERNATIVE: 'Stape',
@@ -341,7 +341,7 @@ export const getProviderLink = async (episodeId) => {
  * @param {string} pathToSave
  * @returns {Promise<string> | Error}
  */
-export const getDownloadLinkFromPreferProvider = async (providerUrl) => {
+export const getDownloadLinkFromMainProvider = async (providerUrl) => {
   const $ = await scrapeCheerio(providerUrl)
   const TEXT_WHEN_NOT_FOUND = 'File does not exist on this server'
   const isNotFound = $('div#lrbox').text().includes(TEXT_WHEN_NOT_FOUND)
