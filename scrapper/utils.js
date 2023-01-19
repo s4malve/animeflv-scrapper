@@ -170,7 +170,17 @@ export const getAllAnimesInPage = async (pageNumber = 1) => {
 /**
  *
  * @param {string} animeId
- * @returns Promise<{ id: string; episode: number }[]>
+ * @returns {Promise<{ id: string; episode: number }[]>}  A list of object with anime id and episode number
+ *
+ * @example
+ *  const ANIME_ID = 'kinsou-no-vermeil'
+ *  const animeEpisodes = await getAnimeEpisodes(ANIME_ID)
+ *
+ *  console.log(animeEpisodes) // [
+    //  { id: 'kinsou-no-vermeil-2', episode: 2 },
+    //  { id: 'kinsou-no-vermeil-1', episode: 1 }
+    // ]
+ *
  */
 export const getAnimeEpisodes = async (animeId) => {
   const episodes = await scrapePlaywright(
