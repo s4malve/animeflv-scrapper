@@ -277,6 +277,11 @@ export const getTodaysAnimes = async () => {
   return todaysAnimes
 }
 
+/**
+ *
+ * @param {string} episodeId
+ * @returns {Promise<{name:string;path:string}>}
+ */
 export const getProviderLink = async (episodeId) => {
   const PROVIDERS = {
     MAIN: 'Zippyshare',
