@@ -372,9 +372,9 @@ export const getDownloadLinkFromMainProvider = async (providerUrl) => {
   const opertaion =
     (firstOperation % secondOperation) + (thirdOperation % lastOperation)
 
-  const finalPath = `${destructurePath(providerUrl).protocol}//${
-    destructurePath(providerUrl).domain
-  }${initialPath}${opertaion}${videoPath}`
+  const { protocol, domain } = destructureURL(providerUrl)
+
+  const finalPath = `${protocol}//${domain}${initialPath}${opertaion}${videoPath}`
 
   return finalPath
 }
