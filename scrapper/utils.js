@@ -340,24 +340,36 @@ export const getProviderLink = async (episodeId) => {
  * @param {string} providerUrl
  * @param {string} pathToSave
  */
-export const downloadVideoWithPreferProvider = async (
-  providerUrl,
-  pathToSave
-) => {
-  const pathArray = providerUrl.split('/')
-  const pathProtocol = pathArray[0]
-  const pathHost = pathArray[2]
-  const downloadLink = await scrapePlaywright(
-    providerUrl,
-    /**
-     *
-     * @param {import('playwright').Page} page
-     * @returns
-     */
-    async (page) =>
-      await page.$eval('a#dlbutton', (el) => el.getAttribute('href')?.slice(1))
-  )
-  const absolutePath = `${pathProtocol}//${pathHost}/${downloadLink}`
+export const getDownloadLinkFromPreferProvider = async (providerUrl) => {
+  const $ = await scrapeCheerio(providerUrl)
 
-  return await downloadVideo(absolutePath, pathToSave)
+  const sanitizeString = (str) => str.replace(/"|'|\(|\)|;/g, '')
+  const pageScript = $('div.center script').text()
+  const searchedScript = pageScript.split('\n')[1]
+  console.log({ pageScript, searchedScript })
+  const splitedScript = searchedScript.split(' ').filter((text) => text !== '')
+  const INITIAL_PATH_INDEX = 2
+  const VIDEO_PATH_INDEX = splitedScript.length - 1
+  const FIRST_OPERATION_INDEX = 4
+  const SECOND_OPERATION_INDEX = 6
+  const THIRD_OPERATION_INDEX = 8
+  const LAST_OPERATION_INDEX = 10
+  const initialPath = sanitizeString(splitedScript[INITIAL_PATH_INDEX])
+  const videoPath = sanitizeString(splitedScript[VIDEO_PATH_INDEX])
+  const firstOperation = Number(
+    sanitizeString(splitedScript[FIRST_OPERATION_INDEX])
+  )
+  const secondOperation = Number(splitedScript[SECOND_OPERATION_INDEX])
+  const thirdOperation = Number(splitedScript[THIRD_OPERATION_INDEX])
+  const lastOperation = Number(
+    sanitizeString(splitedScript[LAST_OPERATION_INDEX])
+  )
+  const opertaion =
+    (firstOperation % secondOperation) + (thirdOperation % lastOperation)
+
+  const finalPath = `${destructurePath(providerUrl).protocol}//${
+    destructurePath(providerUrl).domain
+  }${initialPath}${opertaion}${videoPath}`
+
+  return finalPath
 }
