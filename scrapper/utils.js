@@ -378,3 +378,22 @@ export const getDownloadLinkFromMainProvider = async (providerUrl) => {
 
   return finalPath
 }
+
+export const getDownloadLinkFromAlternativeProvider = async (providerUrl) => {
+  const $ = await scrapeCheerio(providerUrl)
+  const TITLE_WHEN_NOT_FOUND = 'Video not found'
+  const title = $('head').find('title').html()
+
+  if (title?.includes(TITLE_WHEN_NOT_FOUND)) return null
+
+  const scripts = $('body div#norobotlink + script').html()
+  const neededScript = scripts.split('\n').pop()
+  const splitedScript = neededScript?.split(/\((.*?)\)/g)
+  const videoId = splitedScript[3]
+  const noNeededPartsIndex = videoId.indexOf('?')
+  const sanitizeVideoId = videoId.replace(/'/g, '').slice(noNeededPartsIndex)
+
+  const { protocol, domain } = destructureURL(providerUrl)
+
+  return `${protocol}//${domain}/get_video?${sanitizeVideoId}`
+}
