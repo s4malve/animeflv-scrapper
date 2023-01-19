@@ -343,6 +343,10 @@ export const getProviderLink = async (episodeId) => {
  */
 export const getDownloadLinkFromPreferProvider = async (providerUrl) => {
   const $ = await scrapeCheerio(providerUrl)
+  const TEXT_WHEN_NOT_FOUND = 'File does not exist on this server'
+  const isNotFound = $('div#lrbox').text().includes(TEXT_WHEN_NOT_FOUND)
+
+  if (isNotFound) return null
 
   const sanitizeString = (str) => str.replace(/"|'|\(|\)|;/g, '')
   const pageScript = $('div.center script').text()
