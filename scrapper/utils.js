@@ -292,7 +292,7 @@ export const getProvidersLink = async (episodeId) => {
       }
     )
 
-    providersEntries.push(Object.fromEntries(providersEntries))
+    providers.push(Object.fromEntries(providersEntries))
   })
 
   return providers
