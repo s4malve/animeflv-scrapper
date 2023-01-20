@@ -311,7 +311,6 @@ export const getDownloadLinkFromMainProvider = async (providerUrl) => {
   const sanitizeString = (str) => str.replace(/"|'|\(|\)|;/g, '')
   const pageScript = $('div.center script').text()
   const searchedScript = pageScript.split('\n')[1]
-  console.log({ pageScript, searchedScript })
   const splitedScript = searchedScript.split(' ').filter((text) => text !== '')
   const INITIAL_PATH_INDEX = 2
   const VIDEO_PATH_INDEX = splitedScript.length - 1
