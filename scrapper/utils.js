@@ -296,15 +296,7 @@ export const getProvidersLink = async (episodeId) => {
     downloadsProviders.push(Object.fromEntries(downloadsProvidersEntries))
   })
 
-  const filteredProviders = downloadsProviders.filter(({ name }) => {
-    return name !== PROVIDERS.NOT_RECOMMENDED
-  })
-
-  const provider = filteredProviders.find(
-    ({ name }) => name === PROVIDERS.MAIN || name === PROVIDERS.ALTERNATIVE
-  )
-
-  return provider
+  return downloadsProviders
 }
 
 /**
