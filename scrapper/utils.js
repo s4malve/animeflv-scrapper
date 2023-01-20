@@ -254,13 +254,13 @@ export const getTodaysAnimes = async () => {
  * @returns {Promise<[{name:string;path:string}]>}
  */
 export const getProvidersLink = async (episodeId) => {
-  const PROVIDERS = {
+  const PROVIDERS_NAME = {
     MAIN: 'Zippyshare',
     ALTERNATIVE: 'Stape',
     NOT_RECOMMENDED: 'MEGA'
   }
-  const downloadsProviders = []
-  const DOWNLOADS_PROVIDERS_SELECTORS = {
+  const providers = []
+  const PROVIDERS_SELECTORS = {
     name: {
       selector: 'td:first-child',
       action: {
@@ -276,16 +276,14 @@ export const getProvidersLink = async (episodeId) => {
       }
     }
   }
-  const downloadsProvidersSelectorsEntries = Object.entries(
-    DOWNLOADS_PROVIDERS_SELECTORS
-  )
+  const providersSelectorsEntries = Object.entries(PROVIDERS_SELECTORS)
   const $ = await scrapeCheerio(
     `${URLS.animeflv.BASE}/${URLS.animeflv.CHAPTER}/${episodeId}`
   )
-  const $downloadsProviders = $('table.RTbl.Dwnl tbody tr')
+  const $providers = $('table.RTbl.Dwnl tbody tr')
 
-  $downloadsProviders.each((_, el) => {
-    const downloadsProvidersEntries = downloadsProvidersSelectorsEntries.map(
+  $providers.each((_, el) => {
+    const providersEntries = providersSelectorsEntries.map(
       ([key, { action, selector }]) => {
         const value = $(el).find(selector)[action.name](action.value)
 
@@ -293,10 +291,10 @@ export const getProvidersLink = async (episodeId) => {
       }
     )
 
-    downloadsProviders.push(Object.fromEntries(downloadsProvidersEntries))
+    providersEntries.push(Object.fromEntries(providersEntries))
   })
 
-  return downloadsProviders
+  return providers
 }
 
 /**
