@@ -189,56 +189,21 @@ export const getAllAnimesInPage = async (pageNumber = 1) => {
  *
  */
 export const getAnimeEpisodes = async (animeId) => {
-  const episodes = await scrapePlaywright(
-    `${URLS.tioanime.BASE}/${URLS.tioanime.SINGLE_ANIME}/${animeId}`,
-    /**
-     *
-     * @param {import('playwright').Page} page
-     * @returns
-     */
-    async (page) =>
-      await page.$$eval('ul.episodes-list li', (nodes) => {
-        const EPISODES_SELECTORS = {
-          id: {
-            selector: 'a',
-            action: {
-              name: 'getAttribute',
-              value: 'href'
-            },
-            format: (text) => text.slice(5)
-          },
-          episode: {
-            selector: 'div.flex-grow-1 p span',
-            action: {
-              name: 'textContent',
-              value: null
-            },
-            format: (text) => Number(text.split(' ')[1])
-          }
-        }
-
-        const episodesSelectorsEntries = Object.entries(EPISODES_SELECTORS)
-
-        return nodes.map((el) => {
-          const episodesEntries = episodesSelectorsEntries.map(
-            ([key, { action, selector, format }]) => {
-              const rawValue = el.querySelector(selector)
-
-              if (!rawValue) throw new Error('No raw value returned')
-
-              const obtainedValue = action.value
-                ? rawValue[action.name](action.value)
-                : rawValue[action.name]
-              const value = format(obtainedValue)
-
-              return [key, value]
-            }
-          )
-
-          return Object.fromEntries(episodesEntries)
-        })
-      })
+  const $ = await scrapeCheerio(
+    `${URLS.animeflv.BASE}/${URLS.animeflv.SINGLE_ANIME}/${animeId}`
   )
+  const scripts = $(
+    'body script[src="/assets/animeflv/js/alertify.js"] + script'
+  ).text()
+  // const splitedScript = neededScript.split(/\[(.*?)\]|\[/g)
+  const splitedScript = scripts.split('\n ')
+  const neededScript = splitedScript[2]
+  const rawEpisodes = neededScript.split(' ').pop()?.slice(0, -1)
+  const episodesMatrix = JSON.parse(rawEpisodes)
+  const episodes = episodesMatrix.map(([episode]) => ({
+    id: `${animeId}-${episode}`,
+    episode
+  }))
 
   return episodes
 }
