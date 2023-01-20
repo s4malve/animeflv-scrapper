@@ -60,34 +60,40 @@ export const scrapePlaywright = async (url, callback) => {
  * @returns void
  */
 export const downloadVideo = async (videoUrl, pathToSave) => {
-  const axios = await import('axios').then((axios) => axios.default)
-  const { createWriteStream } = await import('node:fs')
+  try {
+    const axios = await import('axios').then((axios) => axios.default)
+    const { createWriteStream } = await import('node:fs')
 
-  const { data, status } = await axios.get(videoUrl, {
-    responseType: 'stream'
-  })
-
-  if (status !== 200) throw new Error(data)
-
-  const writer = createWriteStream(pathToSave)
-
-  return new Promise((resolve, reject) => {
-    data.pipe(writer)
-
-    let error = null
-
-    writer.on('error', (err) => {
-      error = err
-      writer.close()
-      reject(err)
+    const { data, status } = await axios.get(videoUrl, {
+      responseType: 'stream'
     })
 
-    writer.on('close', () => {
-      if (!error) {
-        resolve(true)
-      }
+    if (status !== 200) throw new Error(data)
+
+    const writer = createWriteStream(pathToSave)
+
+    return new Promise((resolve, reject) => {
+      data.pipe(writer)
+
+      let error = null
+
+      writer.on('error', (err) => {
+        error = err
+        writer.close()
+        reject(err)
+      })
+
+      writer.on('close', () => {
+        if (!error) {
+          resolve(true)
+        }
+      })
     })
-  })
+  } catch (error) {
+    console.error(error)
+
+    return error
+  }
 }
 
 export const getMaxAnimeIndex = async () => {
