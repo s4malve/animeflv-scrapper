@@ -1,5 +1,11 @@
 // @ts-check
 
+export const PROVIDERS_NAME = {
+  MAIN: 'Zippyshare',
+  ALTERNATIVE: 'Stape',
+  NOT_RECOMMENDED: 'MEGA'
+}
+
 export const URLS = {
   animeflv: {
     BASE: 'https://www3.animeflv.net',
@@ -254,11 +260,6 @@ export const getTodaysAnimes = async () => {
  * @returns {Promise<[{name:string;path:string}]>}
  */
 export const getProvidersLink = async (episodeId) => {
-  const PROVIDERS_NAME = {
-    MAIN: 'Zippyshare',
-    ALTERNATIVE: 'Stape',
-    NOT_RECOMMENDED: 'MEGA'
-  }
   const providers = []
   const PROVIDERS_SELECTORS = {
     name: {
