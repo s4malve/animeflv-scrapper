@@ -251,7 +251,7 @@ export const getTodaysAnimes = async () => {
 /**
  *
  * @param {string} episodeId
- * @returns {Promise<{name:string;path:string}>}
+ * @returns {Promise<[{name:string;path:string}]>}
  */
 export const getProvidersLink = async (episodeId) => {
   const PROVIDERS = {
