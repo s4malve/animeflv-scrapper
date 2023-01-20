@@ -1,4 +1,5 @@
 ---
+import { BUTTON } from '@/css/styles'
 import Logo from '@components/logo.astro'
 
 import { Search } from '@icons/index.astro'
@@ -37,9 +38,7 @@ const { pathname } = Astro.url
       ))
     }
   </ul>
-  <button
-    class='p-2 rounded bg-stone-100 bg-opacity-20 backdrop-blur-lg drop-shadow-lg border border-transparent hover:border-stone-100/40 focus:border-stone-100/40 transition-colors'
-  >
+  <button class={`p-2 ${BUTTON.primary}`}>
     <Search size={18} />
   </button>
 </nav>
