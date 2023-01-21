@@ -339,6 +339,11 @@ export const getDownloadLinkFromMainProvider = async (providerUrl) => {
   return finalPath
 }
 
+/**
+ *
+ * @param {url} providerUrl
+ * @returns {Promise<string | null>} video url or null
+ */
 export const getDownloadLinkFromAlternativeProvider = async (providerUrl) => {
   try {
     const urlOrNull = await scrapePlaywright(providerUrl, (page) => {
