@@ -341,22 +341,21 @@ export const getDownloadLinkFromMainProvider = async (providerUrl) => {
 
 export const getDownloadLinkFromAlternativeProvider = async (providerUrl) => {
   try {
-    const $ = await scrapeCheerio(providerUrl)
-    const TITLE_WHEN_NOT_FOUND = 'Video not found'
-    const title = $('head').find('title').html()
+    const urlOrNull = await scrapePlaywright(providerUrl, (page) => {
+      const TITLE_WHEN_NOT_FOUND = 'Video not found'
+      const title = page.$eval(
+        'head',
+        (el) => el.querySelector('title')?.textContent
+      )
 
-    if (title?.includes(TITLE_WHEN_NOT_FOUND)) return null
+      if (title?.includes(TITLE_WHEN_NOT_FOUND)) return null
 
-    const scripts = $('body div#norobotlink + script').html()
-    const neededScript = scripts.split('\n').pop()
-    const splitedScript = neededScript?.split(/\((.*?)\)/g)
-    const videoId = splitedScript[3]
-    const noNeededPartsIndex = videoId.indexOf('?')
-    const sanitizeVideoId = videoId.replace(/'/g, '').slice(noNeededPartsIndex)
+      const url = page.$eval('video#mainvideo', (el) => el.src)
 
-    const { protocol, domain } = destructureURL(providerUrl)
+      return url
+    })
 
-    return `${protocol}//${domain}/get_video?${sanitizeVideoId}`
+    return urlOrNull
   } catch (error) {
     return error
   }
