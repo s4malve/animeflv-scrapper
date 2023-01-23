@@ -229,6 +229,14 @@ export const getTodaysAnimes = async () => {
       },
       format: (text) => text.slice(5)
     },
+    thumbnail: {
+      selector: 'span.Image img',
+      action: {
+        name: 'attr',
+        value: 'src'
+      },
+      format: (text) => `${URLS.animeflv.BASE}${text}`
+    },
     episode: {
       selector: 'span.Capi',
       action: {
@@ -236,6 +244,14 @@ export const getTodaysAnimes = async () => {
         value: undefined
       },
       format: (text) => Number(text.split(' ')[1])
+    },
+    anime: {
+      selector: 'strong.Title',
+      action: {
+        name: 'text',
+        value: undefined
+      },
+      format: null
     }
   }
   const $ = await scrapeCheerio(URLS.animeflv.BASE)
