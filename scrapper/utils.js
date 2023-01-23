@@ -65,16 +65,16 @@ export const scrapePlaywright = async (url, callback) => {
 
 /**
  *
- * @param {string} videoUrl
+ * @param {string} assetUrl
  * @param {string} pathToSave
  * @returns void
  */
-export const downloadVideo = async (videoUrl, pathToSave) => {
+export const downloadAsset = async (assetUrl, pathToSave) => {
   try {
     const axios = await import('axios').then((axios) => axios.default)
     const { createWriteStream } = await import('node:fs')
 
-    const { data, status } = await axios.get(videoUrl, {
+    const { data, status } = await axios.get(assetUrl, {
       responseType: 'stream'
     })
 
