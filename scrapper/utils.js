@@ -385,3 +385,33 @@ export const getDownloadLinkFromAlternativeProvider = async (providerUrl) => {
     return error
   }
 }
+
+export const writeFile = async (filePath, data) => {
+  const { writeFile: nodeWriteFile } = await import('node:fs')
+  return await nodeWriteFile(
+    filePath,
+    JSON.stringify(data, null, 2),
+    (err) => err && console.log(err)
+  )
+}
+
+export const emptyDir = async (dirPath) => {
+  const { readdir, unlink } = await import('node:fs')
+  const { join } = await import('node:path')
+
+  readdir(dirPath, (err, files) => {
+    if (err) throw err
+
+    for (const file of files) {
+      unlink(join(dirPath, file), (err) => {
+        if (err) throw err
+      })
+    }
+  })
+}
+
+export const isDirEmpty = async (dirPath) => {
+  const { readdirSync } = await import('node:fs')
+
+  return readdirSync(dirPath).length === 0
+}
