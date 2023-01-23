@@ -1,5 +1,5 @@
 ---
-import { BUTTON } from '@/css/styles'
+import { BUTTON, WRAPPER } from '@/css/styles'
 import Logo from '@components/logo.astro'
 
 import { Search } from '@icons/index.astro'
@@ -18,27 +18,31 @@ const links = [
 const { pathname } = Astro.url
 ---
 
-<nav class='px-6 py-4 flex items-center justify-between fixed w-full'>
-  <a href='/'>
-    <Logo />
-  </a>
-  <ul class='flex items-center gap-x-8 font-medium'>
-    {
-      links.map(({ name, path }) => (
-        <li>
-          <a
-            href={path}
-            class={`transition-[transform,color] hover:text-indigo-300 ${
-              path === pathname ? 'text-indigo-300' : ''
-            }`}
-          >
-            {name}
-          </a>
-        </li>
-      ))
-    }
-  </ul>
-  <button class={`p-2 ${BUTTON.primary}`}>
-    <Search size={18} />
-  </button>
+<nav
+  class='h-20 fixed w-full z-30 bg-stone-900 bg-opacity-30 backdrop-blur-sm drop-shadow-sm flex items-center'
+>
+  <div class={`${WRAPPER} flex items-center justify-between`}>
+    <a href='/'>
+      <Logo />
+    </a>
+    <ul class='lg:flex items-center gap-x-8 font-medium hidden'>
+      {
+        links.map(({ name, path }) => (
+          <li>
+            <a
+              href={path}
+              class={`transition-[transform,color] hover:text-indigo-300 ${
+                path === pathname ? 'text-indigo-300' : ''
+              }`}
+            >
+              {name}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <button class={`p-2 hidden lg:inline-block ${BUTTON.primary}`}>
+      <Search size={18} />
+    </button>
+  </div>
 </nav>
