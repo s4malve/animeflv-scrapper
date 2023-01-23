@@ -1,9 +1,17 @@
 import { Hono } from 'hono'
+import { cors } from 'hono/cors'
 
 import animes from '../db/animes.json'
 import { paginator } from './utils'
 
 const app = new Hono()
+
+app.use(
+  '/api/*',
+  cors({
+    origin: '*'
+  })
+)
 
 app.get('/', (c) =>
   c.json({
