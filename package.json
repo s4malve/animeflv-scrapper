@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "publish:api": "wrangler publish ./api/index.ts",
     "scrape:all-animes": "node ./scrapper/all-animes.js",
     "dev:api": "wrangler dev",
     "dev": "astro dev",
