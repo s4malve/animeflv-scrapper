@@ -1,7 +1,6 @@
 import { resolve } from 'node:path'
-import { writeFile } from 'node:fs'
 
-import { getAllAnimesInPage } from './utils'
+import { getAllAnimesInPage, writeFile } from './utils'
 
 const animes = []
 
@@ -15,6 +14,4 @@ for (let i = 1; i <= MAX_ANIME_INDEX; i++) {
 
 const filePath = resolve('./db/animes.json')
 
-await writeFile(filePath, JSON.stringify(animes, null, 2), (err) => {
-  if (err) console.log(err)
-})
+await writeFile(filePath, animes)
