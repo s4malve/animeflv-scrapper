@@ -1,5 +1,6 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
+import { serveStatic } from 'hono/serve-static.module'
 
 import animes from '../db/animes.json'
 import { paginator } from './utils'
@@ -12,6 +13,8 @@ app.use(
     origin: '*'
   })
 )
+
+app.use('/static/*', serveStatic({ root: './' }))
 
 app.get('/', (c) =>
   c.json({
