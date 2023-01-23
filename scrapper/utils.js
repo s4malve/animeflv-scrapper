@@ -262,7 +262,7 @@ export const getTodaysAnimes = async () => {
     const todaysAnimeEntries = todaysAnimeSelectorsEntries.map(
       ([key, { action, format, selector }]) => {
         const rawValue = $(el).find(selector)[action.name](action.value)
-        const value = format(rawValue)
+        const value = format ? format(rawValue) : rawValue
 
         return [key, value]
       }
