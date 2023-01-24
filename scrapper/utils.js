@@ -300,12 +300,22 @@ export const getDownloadLinkFromAlternativeProvider = async (providerUrl) => {
   }
 }
 
-export const writeFile = async (filePath, data) => {
-  const { writeFile: nodeWriteFile } = await import('node:fs')
-  return await nodeWriteFile(
-    filePath,
+export const writeDbFile = async (dbName, data) => {
+  const { writeFile } = await import('node:fs')
+  const { resolve } = await import('node:path')
+
+  const DB_PATH = resolve('./db/')
+
+  return await writeFile(
+    `${DB_PATH}/${dbName}.json`,
     JSON.stringify(data, null, 2),
-    (err) => err && console.log(err)
+    (err) => {
+      if (err) {
+        console.log(err)
+
+        throw err
+      }
+    }
   )
 }
 
