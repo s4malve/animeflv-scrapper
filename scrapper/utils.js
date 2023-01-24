@@ -63,18 +63,14 @@ export const scrapePlaywright = async (url, callback) => {
   return scrapeActions
 }
 
-/**
- *
- * @param {string} assetUrl
- * @param {string} pathToSave
- * @returns void
- */
 export const downloadAsset = async ({ pathFrom, pathTo, fileName }) => {
   try {
     const axios = await import('axios').then((axios) => axios.default)
     const { createWriteStream } = await import('node:fs')
+    const isVideoFile = fileName.endsWith('.mp4')
+    const fileType = isVideoFile ? 'video' : 'image'
 
-    console.log(`Fetching image for file name: ${fileName}`)
+    console.log(`Fetching ${fileType} for file name: ${fileName}`)
 
     const { data, status } = await axios.get(pathFrom, {
       responseType: 'stream'
