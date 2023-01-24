@@ -202,39 +202,25 @@ export const scrapper = async ({ url, selector, selectors }) => {
  * @returns {Promise<[{name:string;path:string}]>}
  */
 export const getProvidersLink = async (episodeId) => {
-  const providers = []
-  const PROVIDERS_SELECTORS = {
-    name: {
-      selector: 'td:first-child',
-      action: {
-        name: 'text',
-        value: undefined
+  const providers = await scrapper({
+    selectors: {
+      name: {
+        selector: 'td:first-child',
+        action: {
+          name: 'text',
+          value: undefined
+        }
+      },
+      path: {
+        selector: 'td:last-child a',
+        action: {
+          name: 'attr',
+          value: 'href'
+        }
       }
     },
-    path: {
-      selector: 'td:last-child a',
-      action: {
-        name: 'attr',
-        value: 'href'
-      }
-    }
-  }
-  const providersSelectorsEntries = Object.entries(PROVIDERS_SELECTORS)
-  const $ = await scrapeCheerio(
-    `${URLS.animeflv.BASE}/${URLS.animeflv.CHAPTER}/${episodeId}`
-  )
-  const $providers = $('table.RTbl.Dwnl tbody tr')
-
-  $providers.each((_, el) => {
-    const providersEntries = providersSelectorsEntries.map(
-      ([key, { action, selector }]) => {
-        const value = $(el).find(selector)[action.name](action.value)
-
-        return [key, value]
-      }
-    )
-
-    providers.push(Object.fromEntries(providersEntries))
+    url: `${URLS.animeflv.BASE}/${URLS.animeflv.CHAPTER}/${episodeId}`,
+    selector: 'table.RTbl.Dwnl tbody tr'
   })
 
   return providers
