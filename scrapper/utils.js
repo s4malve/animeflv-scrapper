@@ -157,48 +157,31 @@ export const getAnimeEpisodes = async (animeId) => {
   return episodes
 }
 
-export const getTodaysAnimes = async () => {
-  const todaysAnimes = []
-  const TODAYS_ANIME_SELECTORS = {
-    id: {
-      selector: 'a',
-      action: {
-        name: 'attr',
-        value: 'href'
-      },
-      format: (text) => text.slice(5)
-    },
-    thumbnail: {
-      selector: 'span.Image img',
-      action: {
-        name: 'attr',
-        value: 'src'
-      },
-      format: (text) => `${URLS.animeflv.BASE}${text}`
-    },
-    episode: {
-      selector: 'span.Capi',
-      action: {
-        name: 'text',
-        value: undefined
-      },
-      format: (text) => Number(text.split(' ')[1])
-    },
-    anime: {
-      selector: 'strong.Title',
-      action: {
-        name: 'text',
-        value: undefined
-      },
-      format: null
-    }
-  }
-  const $ = await scrapeCheerio(URLS.animeflv.BASE)
-  const $todaysAnimes = $('ul.ListEpisodios.AX.Rows.A06.C04.D03 li')
-  const todaysAnimeSelectorsEntries = Object.entries(TODAYS_ANIME_SELECTORS)
+/**
+ * @param {{
+ *  url: string
+ *  selector: string
+ * selectors: {
+ *  [key:string]: {
+ *  selector: string
+ *  action: {
+ *    name:string
+ *    value: string | undefined
+ *  }
+ *  format: ((text:string) => string | number) | null
+ *  }
+ * }
+ * }} params
+ * @returns
+ */
+export const scrapper = async ({ url, selector, selectors }) => {
+  const items = []
+  const $ = await scrapeCheerio(url)
+  const $items = $(selector)
+  const selectorsEntries = Object.entries(selectors)
 
-  $todaysAnimes.each((_, el) => {
-    const todaysAnimeEntries = todaysAnimeSelectorsEntries.map(
+  $items.each((_, el) => {
+    const entries = selectorsEntries.map(
       ([key, { action, format, selector }]) => {
         const rawValue = $(el).find(selector)[action.name](action.value)
         const value = format ? format(rawValue) : rawValue
@@ -207,10 +190,10 @@ export const getTodaysAnimes = async () => {
       }
     )
 
-    todaysAnimes.push(Object.fromEntries(todaysAnimeEntries))
+    items.push(Object.fromEntries(entries))
   })
 
-  return todaysAnimes
+  return items
 }
 
 /**
