@@ -69,18 +69,22 @@ export const scrapePlaywright = async (url, callback) => {
  * @param {string} pathToSave
  * @returns void
  */
-export const downloadAsset = async (assetUrl, pathToSave) => {
+export const downloadAsset = async ({ pathFrom, pathTo, fileName }) => {
   try {
     const axios = await import('axios').then((axios) => axios.default)
     const { createWriteStream } = await import('node:fs')
 
-    const { data, status } = await axios.get(assetUrl, {
+    console.log(`Fetching image for file name: ${fileName}`)
+
+    const { data, status } = await axios.get(pathFrom, {
       responseType: 'stream'
     })
 
     if (status !== 200) throw new Error(data)
 
-    const writer = createWriteStream(pathToSave)
+    console.log(`Writing image to disk ${fileName}`)
+
+    const writer = createWriteStream(`${pathTo}/${fileName}`)
 
     return new Promise((resolve, reject) => {
       data.pipe(writer)
@@ -95,6 +99,8 @@ export const downloadAsset = async (assetUrl, pathToSave) => {
 
       writer.on('close', () => {
         if (!error) {
+          console.log(`Everything is done! ${fileName}`)
+
           resolve(true)
         }
       })
