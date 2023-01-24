@@ -274,21 +274,27 @@ export const getDownloadLinkFromMainProvider = async (providerUrl) => {
  */
 export const getDownloadLinkFromAlternativeProvider = async (providerUrl) => {
   try {
-    const urlOrNull = await scrapePlaywright(providerUrl, (page) => {
-      const TITLE_WHEN_NOT_FOUND = 'Video not found'
-      const title = page.$eval(
-        'head',
-        (el) => el.querySelector('title')?.textContent
-      )
+    const $ = await scrapeCheerio(providerUrl)
+    const rawScripts = $('div#norobotlink + script').text()
 
-      if (title?.includes(TITLE_WHEN_NOT_FOUND)) return null
+    if (!rawScripts) return null
 
-      const url = page.$eval('video#mainvideo', (el) => el.src)
+    const formatScripts = (scripts) => scripts.trim().split('\n')
+    const getIdFromScript = (script) => {
+      const ID_INDEX = script.indexOf('=') + 1
+      const id = script.slice(ID_INDEX)
 
-      return url
+      // eslint-disable-next-line no-eval
+      return String(eval(id)).slice(2)
+    }
+
+    const noRobotsScript = formatScripts(rawScripts).find((script) => {
+      const ID = 'norobotlink'
+
+      return script.includes(ID)
     })
 
-    return urlOrNull
+    return getIdFromScript(noRobotsScript)
   } catch (error) {
     return error
   }
