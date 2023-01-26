@@ -9,7 +9,8 @@ export const PROVIDERS_NAME = {
 export const URLS = {
   base: 'https://animeflv-scrapper.s4malve.workers.dev',
   api: {
-    lastEpidodesThumbnails: './assets/static/thumbnails/last-episodes'
+    lastEpidodesThumbnails: './assets/static/thumbnails/last-episodes',
+    thumbnails: './assets/static/thumbnails'
   },
   animeflv: {
     BASE: 'https://www3.animeflv.net',
