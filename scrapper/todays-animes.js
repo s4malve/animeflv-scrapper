@@ -66,7 +66,7 @@ export const getTodaysAnimes = async () => {
           name === PROVIDERS_NAME.MAIN || name === PROVIDERS_NAME.ALTERNATIVE
       )
       const downloadLink =
-        provider.name === PROVIDERS_NAME.MAIN
+        provider?.name === PROVIDERS_NAME.MAIN
           ? await getDownloadLinkFromMainProvider(provider.path)
           : await getDownloadLinkFromAlternativeProvider(provider.path)
 
