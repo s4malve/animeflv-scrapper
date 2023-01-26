@@ -1,4 +1,4 @@
-import { scrapper, URLS, writeDbFile } from './utils.js'
+import { downloadAsset, scrapper, URLS, writeDbFile } from './utils.js'
 
 export const getLastAddedAnimes = async () => {
   const url = URLS.animeflv.BASE
@@ -53,6 +53,21 @@ export const getLastAddedAnimes = async () => {
   return animeCards
 }
 
-const lastAddedAnimes = await getLastAddedAnimes()
+const rawLastAddedAnimes = await getLastAddedAnimes()
+
+const lastAddedAnimes = await Promise.all(
+  rawLastAddedAnimes.map(async (anime) => {
+    await downloadAsset({
+      pathFrom: anime.thumbnail,
+      pathTo: URLS.api.thumbnails,
+      fileName: `${anime.id}.jpg`
+    })
+
+    return {
+      ...anime,
+      thumbnail: `${URLS.base}/static/thumbnails/${anime.id}.jpg`
+    }
+  })
+)
 
 await writeDbFile('last-added-animes', lastAddedAnimes)
