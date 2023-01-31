@@ -79,7 +79,7 @@ export const downloadAsset = async ({ pathFrom, pathTo, fileName }) => {
 
     if (status !== 200) throw new Error(data)
 
-    console.log(`Writing image to disk ${fileName}`)
+    console.log(`Writing ${fileType} to disk ${fileName}`)
 
     const writer = createWriteStream(`${pathTo}/${fileName}`)
 
